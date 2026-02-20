@@ -4,14 +4,23 @@
 
 飞书官方 MCP 只做文档读写。我们做的是：**多维表格自动化 + 跨文档工作流 + 智能报告生成 + 零售运营审计**。
 
+## 兼容平台
+
+| 平台 | 入口文件 | 说明 |
+|------|---------|------|
+| [OpenClaw](https://github.com/openclaw/openclaw) | `SKILL.md` | 放到 `~/.openclaw/skills/feishu-power-skill/` 自动加载 |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | `CLAUDE.md` | 放到项目目录，Claude Code 自动读取 |
+
+同一套代码，两个入口，各自按自己的协议发现能力。
+
 ## 功能
 
-| 模块 | 能力 |
-|------|------|
-| **Bitable 引擎** | 批量创建/更新记录、跨表 JOIN、数据快照、统计摘要、CSV/JSON 导入 |
-| **文档工作流** | 模板引擎（变量/循环/条件）、Bitable 数据→飞书文档一步生成 |
-| **零售审计** | YAML 配置化规则、门店健康评分、异常诊断、报告自动发布到飞书 |
-| **API 封装** | Token 自动管理、Bitable/Docx/Wiki/Drive 全覆盖 |
+| 模块 | 脚本 | 能力 |
+|------|------|------|
+| Bitable 引擎 | `bitable_engine.py` | 批量创建/更新、跨表 JOIN、数据快照、统计摘要、CSV/JSON 导入 |
+| 文档工作流 | `doc_workflow.py` | 模板引擎 + Bitable 数据→飞书文档一步生成 |
+| 零售审计 | `retail_audit.py` | YAML 配置化规则、门店健康评分、异常诊断、报告自动发布 |
+| API 封装 | `feishu_api.py` | Token 自动管理、Bitable/Docx/Wiki/Drive 全覆盖 |
 
 ## 快速开始
 
@@ -48,7 +57,6 @@ python3 scripts/bitable_engine.py stats --app <app_token> --table <table_id>
 **Bitable 数据 → 飞书文档：**
 
 ```bash
-# 一步到位：提取数据 + 模板渲染 + 创建飞书文档
 python3 scripts/doc_workflow.py generate \
   --app <app_token> --table <table_id> \
   --template templates/data_summary.md \
@@ -58,10 +66,10 @@ python3 scripts/doc_workflow.py generate \
 **零售运营审计：**
 
 ```bash
-# Demo 模式（50家模拟门店）
+# Demo（50家模拟门店）
 python3 scripts/retail_audit.py demo --output report.md
 
-# 从 Bitable 真实数据审计 + 发布到飞书
+# 真实数据审计 + 发布到飞书
 python3 scripts/retail_audit.py audit \
   --app <app_token> --sales-table <table_id> \
   --config configs/retail_default.yaml \
@@ -82,7 +90,6 @@ python3 scripts/retail_audit.py audit \
 YAML 配置化，按行业切换阈值：
 
 ```yaml
-# configs/retail_default.yaml（服装）
 rules:
   sell_through_high:
     enabled: true
@@ -92,29 +99,26 @@ rules:
       days_left_max: 3
 ```
 
-内置配置：`retail_default.yaml`（服装零售）、`fmcg.yaml`（快消零售）
+内置：`retail_default.yaml`（服装）、`fmcg.yaml`（快消）。复制一份改阈值即可适配其他行业。
 
 ## 项目结构
 
 ```
 feishu-power-skill/
+├── SKILL.md                 # OpenClaw 入口
+├── CLAUDE.md                # Claude Code 入口
 ├── scripts/
-│   ├── feishu_api.py        # 飞书 API 封装（Token 管理 + 全 API 覆盖）
-│   ├── bitable_engine.py    # 多维表格自动化引擎
-│   ├── doc_workflow.py      # 文档工作流（模板 + 数据 → 飞书文档）
-│   └── retail_audit.py      # 零售运营审计引擎
+│   ├── feishu_api.py        # 飞书 API 封装
+│   ├── bitable_engine.py    # 多维表格引擎
+│   ├── doc_workflow.py      # 文档工作流
+│   └── retail_audit.py      # 零售审计引擎
 ├── templates/               # 文档模板
 │   ├── weekly_report.md
 │   └── data_summary.md
-├── configs/                 # 审计规则配置
-│   ─ retail_default.yaml  # 服装零售
-│   └── fmcg.yaml           # 快消零售
-└── SKILL.md                 # OpenClaw Skill 入口
+└── configs/                 # 审计规则
+    ├── retail_default.yaml
+    └── fmcg.yaml
 ```
-
-## 作为 OpenClaw Skill 使用
-
-将本项目放到 `~/.openclaw/skills/feishu-power-skill/`，OpenClaw 会自动识别 SKILL.md 并加载。
 
 ## License
 

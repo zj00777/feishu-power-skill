@@ -4,3 +4,4 @@ __pycache__/
 snapshots/
 *.json
 !package.json
+MVP.md
