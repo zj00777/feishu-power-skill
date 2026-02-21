@@ -78,6 +78,27 @@ import feishu_api as api
 records = api.bitable_list_all_records(app_token, table_id)
 ```
 
+### 5. 定时报告（report_generator.py）
+
+```bash
+# 运行所有到期任务
+python3 scripts/report_generator.py run --schedule configs/schedule.yaml
+
+# 运行指定任务（强制）
+python3 scripts/report_generator.py run --schedule configs/schedule.yaml --job daily_audit --force
+
+# 列出任务状态
+python3 scripts/report_generator.py list --schedule configs/schedule.yaml
+
+# 单次审计报告
+python3 scripts/report_generator.py audit --demo --output report.md
+
+# 单次模板报告
+python3 scripts/report_generator.py template --app <token> --table <id> --template <path> --publish
+```
+
+调度配置：`configs/schedule.yaml`，支持 daily/weekly/monthly 频率。
+
 ## 依赖
 
 ```bash

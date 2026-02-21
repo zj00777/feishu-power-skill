@@ -9,17 +9,24 @@ import json
 import requests
 from typing import Optional, Dict, List, Any
 
-# 飞书应用凭证
+# 飞书应用凭证（延迟检查，允许 demo 模式不配置凭证）
 APP_ID = os.environ.get("FEISHU_APP_ID", "")
 APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
 
-if not APP_ID or not APP_SECRET:
-    raise EnvironmentError(
-        "请设置环境变量 FEISHU_APP_ID 和 FEISHU_APP_SECRET。\n"
-        "export FEISHU_APP_ID=cli_xxx\n"
-        "export FEISHU_APP_SECRET=xxx"
-    )
 BASE_URL = "https://open.feishu.cn/open-apis"
+
+
+def _check_creds():
+    """调用 API 前检查凭证是否已配置"""
+    global APP_ID, APP_SECRET
+    APP_ID = os.environ.get("FEISHU_APP_ID", APP_ID)
+    APP_SECRET = os.environ.get("FEISHU_APP_SECRET", APP_SECRET)
+    if not APP_ID or not APP_SECRET:
+        raise EnvironmentError(
+            "请设置环境变量 FEISHU_APP_ID 和 FEISHU_APP_SECRET。\n"
+            "export FEISHU_APP_ID=cli_xxx\n"
+            "export FEISHU_APP_SECRET=xxx"
+        )
 
 # Token 缓存
 _token_cache = {"token": None, "expires_at": 0}
@@ -27,6 +34,7 @@ _token_cache = {"token": None, "expires_at": 0}
 
 def get_token() -> str:
     """获取 tenant_access_token，自动缓存和刷新"""
+    _check_creds()
     now = time.time()
     if _token_cache["token"] and _token_cache["expires_at"] > now + 60:
         return _token_cache["token"]

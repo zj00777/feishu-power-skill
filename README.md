@@ -20,6 +20,7 @@
 | Bitable 引擎 | `bitable_engine.py` | 批量创建/更新、跨表 JOIN、数据快照、统计摘要、CSV/JSON 导入 |
 | 文档工作流 | `doc_workflow.py` | 模板引擎 + Bitable 数据→飞书文档一步生成 |
 | 零售审计 | `retail_audit.py` | YAML 配置化规则、门店健康评分、异常诊断、报告自动发布 |
+| 定时报告 | `report_generator.py` | 日/周/月调度、多报告类型、YAML 配置、状态跟踪 |
 | API 封装 | `feishu_api.py` | Token 自动管理、Bitable/Docx/Wiki/Drive 全覆盖 |
 
 ## 快速开始
@@ -33,11 +34,15 @@ export FEISHU_APP_SECRET=xxx
 
 需要一个飞书自建应用，开通 Bitable 和 Docx 相关权限。
 
-### 2. 安装依赖
+### 2. 安装（推荐）
 
 ```bash
-pip install requests pyyaml
+bash install.sh
 ```
+
+自动检测环境、安装依赖、链接到 OpenClaw/Claude Code、运行冒烟测试。
+
+也可以手动：`pip install requests pyyaml`
 
 ### 3. 使用
 
@@ -76,6 +81,19 @@ python3 scripts/retail_audit.py audit \
   --publish
 ```
 
+**定时报告调度：**
+
+```bash
+# 运行所有到期任务
+python3 scripts/report_generator.py run --schedule configs/schedule.yaml
+
+# 列出任务状态
+python3 scripts/report_generator.py list --schedule configs/schedule.yaml
+
+# 强制运行指定任务
+python3 scripts/report_generator.py run --schedule configs/schedule.yaml --job daily_audit --force
+```
+
 ## 模板语法
 
 ```
@@ -111,7 +129,8 @@ feishu-power-skill/
 │   ├── feishu_api.py        # 飞书 API 封装
 │   ├── bitable_engine.py    # 多维表格引擎
 │   ├── doc_workflow.py      # 文档工作流
-│   └── retail_audit.py      # 零售审计引擎
+│   ├── retail_audit.py      # 零售审计引擎
+│   └── report_generator.py  # 定时报告生成器
 ├── templates/               # 文档模板
 │   ├── weekly_report.md
 │   └── data_summary.md
