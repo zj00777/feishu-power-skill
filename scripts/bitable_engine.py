@@ -332,6 +332,20 @@ def main():
     p_stats.add_argument("--app", required=True, help="App token")
     p_stats.add_argument("--table", required=True, help="Table ID")
 
+    # import-csv
+    p_csv = sub.add_parser("import-csv", help="从 CSV 文件导入记录")
+    p_csv.add_argument("--app", required=True, help="App token")
+    p_csv.add_argument("--table", required=True, help="Table ID")
+    p_csv.add_argument("--file", required=True, help="CSV 文件路径")
+    p_csv.add_argument("--dry-run", action="store_true", help="仅预览，不执行")
+
+    # import-json
+    p_json = sub.add_parser("import-json", help="从 JSON 文件导入记录")
+    p_json.add_argument("--app", required=True, help="App token")
+    p_json.add_argument("--table", required=True, help="Table ID")
+    p_json.add_argument("--file", required=True, help="JSON 文件路径")
+    p_json.add_argument("--dry-run", action="store_true", help="仅预览，不执行")
+
     args = parser.parse_args()
 
     if args.command == "batch-create":
@@ -355,6 +369,11 @@ def main():
 
     elif args.command == "stats":
         result = stats(args.app, args.table)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+
+    elif args.command in ("import-csv", "import-json"):
+        records = load_records_from_file(args.file)
+        result = batch_create(args.app, args.table, records, args.dry_run)
         print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

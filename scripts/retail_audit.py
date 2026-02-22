@@ -287,7 +287,8 @@ def generate_report_markdown(audit_result: Dict) -> str:
     lines.append("")
     total = audit_result["total_stores"]
     lines.append(f"- 门店总数：{total}")
-    lines.append(f"- 🟢 健康门店：{s['healthy']} ({s['healthy']/total:.0%})")
+    healthy_pct = f" ({s['healthy']/total:.0%})" if total > 0 else ""
+    lines.append(f"- 🟢 健康门店：{s['healthy']}{healthy_pct}")
     lines.append(f"- 🔴 严重异常：{s['critical']} 条")
     lines.append(f"- 🟡 警告：{s['warning']} 条")
     lines.append("")
@@ -573,6 +574,7 @@ def main():
         md = generate_report_markdown(result)
 
         if args.output:
+            os.makedirs(os.path.dirname(args.output) or ".", exist_ok=True)
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(md)
             print(f"\n报告已保存: {args.output}")
