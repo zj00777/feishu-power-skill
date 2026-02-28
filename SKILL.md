@@ -52,6 +52,9 @@ python3 scripts/bitable_engine.py stats --app <app_token> --table <table_id>
 
 # CSV 导入
 python3 scripts/bitable_engine.py import-csv --app <app_token> --table <table_id> --file data.csv
+
+# JSON 导入
+python3 scripts/bitable_engine.py import-json --app <app_token> --table <table_id> --file data.json
 ```
 
 ### 2. 文档工作流引擎 (`doc_workflow.py`)

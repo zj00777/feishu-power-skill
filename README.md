@@ -57,6 +57,10 @@ python3 scripts/bitable_engine.py join --app <app_token> --left <table1> --right
 
 # 统计摘要
 python3 scripts/bitable_engine.py stats --app <app_token> --table <table_id>
+
+# CSV / JSON 导入（内部走 batch-create）
+python3 scripts/bitable_engine.py import-csv --app <app_token> --table <table_id> --file data.csv
+python3 scripts/bitable_engine.py import-json --app <app_token> --table <table_id> --file data.json
 ```
 
 **Bitable 数据 → 飞书文档：**
